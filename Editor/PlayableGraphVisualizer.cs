@@ -44,7 +44,7 @@ public class PlayableNode : SharedPlayableNode
     {
     }
 
-    public override Type GetContentType()
+    private Playable GetPlayable()
     {
         Playable p = Playable.Null;
         try
@@ -55,15 +55,41 @@ public class PlayableNode : SharedPlayableNode
         {
             // Ignore.
         }
+        return p;
+    }
+
+    public override Type GetContentType()
+    {
+        Playable p = GetPlayable();
         return !p.IsValid() ? null : p.GetPlayableType();
     }
 
     public override string GetContentTypeShortName()
     {
-        // Remove the extra Playable at the end of the Playable types.
         string shortName = base.GetContentTypeShortName();
+        // Remove the extra Playable at the end of the Playable types.
         string cleanName = RemoveFromEnd(shortName, "Playable");
+
         return string.IsNullOrEmpty(cleanName) ? shortName : cleanName;
+    }
+
+    public override string GetNodeName()
+    {
+        // Check if we can get a meaningful name from the Playable to differentiate it from others of the same type
+        string name = base.GetNodeName();
+        Type type = GetContentType();
+
+        if (type == typeof(UnityEngine.Animations.AnimationClipPlayable))
+        {
+            Playable p = GetPlayable();
+            name = ((UnityEngine.Animations.AnimationClipPlayable)p).GetAnimationClip().name;
+        }
+        else if (content is UnityEngine.Animations.AnimatorControllerPlayable)
+        {
+            // TODO: enumerate parameters and print which ones are active in a panel
+        }
+
+        return name;
     }
 
     public override string ToString()
@@ -78,6 +104,7 @@ public class PlayableNode : SharedPlayableNode
 
         if (h.IsValid())
         {
+            sb.AppendLine(InfoString("Name", GetNodeName()));
             sb.AppendLine(InfoString("IsDone", h.IsDone()));
             sb.AppendLine(InfoString("InputCount", h.GetInputCount()));
             sb.AppendLine(InfoString("OutputCount", h.GetOutputCount()));

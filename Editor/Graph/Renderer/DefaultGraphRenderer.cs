@@ -436,7 +436,7 @@ public class DefaultGraphRenderer : IGraphRenderer
     {
         string nodeType = node.GetContentTypeName();
         NodeTypeLegend nodeTypeLegend = m_LegendForType[nodeType];
-        string formatedLabel = Regex.Replace(nodeTypeLegend.label, "(\\B[A-Z])", "\n$1"); // Split into multi-lines
+        string formatedLabel = Regex.Replace(node.GetNodeName(), "(\\B[A-Z])", "\n$1"); // Split into multi-lines
 
         DrawRect(nodeRect, nodeTypeLegend.color, formatedLabel, node.active, selected);
     }
