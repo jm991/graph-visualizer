@@ -82,7 +82,11 @@ public class PlayableNode : SharedPlayableNode
         if (type == typeof(UnityEngine.Animations.AnimationClipPlayable))
         {
             Playable p = GetPlayable();
-            name = ((UnityEngine.Animations.AnimationClipPlayable)p).GetAnimationClip().name;
+            UnityEngine.AnimationClip clip = ((UnityEngine.Animations.AnimationClipPlayable)p).GetAnimationClip();
+            if (clip != null)
+            {
+                name = clip.name;
+            }
         }
         else if (content is UnityEngine.Animations.AnimatorControllerPlayable)
         {
